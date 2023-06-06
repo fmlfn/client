@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	tls "github.com/yarochewsky/utls"
+	tls "github.com/bogdanfinn/utls"
 )
 
 type JA3Response struct {

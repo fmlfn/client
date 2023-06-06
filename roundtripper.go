@@ -8,12 +8,12 @@ import (
 	"strings"
 	"sync"
 
-	http "github.com/yarochewsky/fhttp"
+	http "github.com/bogdanfinn/fhttp"
 
-	"github.com/yarochewsky/fhttp/http2"
+	"github.com/bogdanfinn/fhttp/http2"
 	"golang.org/x/net/proxy"
 
-	utls "github.com/yarochewsky/utls"
+	utls "github.com/bogdanfinn/utls"
 )
 
 var errProtocolNegotiated = errors.New("protocol negotiated")
@@ -83,7 +83,7 @@ func (rt *roundTripper) dialTLS(ctx context.Context, network, addr string) (net.
 		host = addr
 	}
 
-	conn := utls.UClient(rawConn, &utls.Config{ServerName: host}, rt.clientHelloId)
+	conn := utls.UClient(rawConn, &utls.Config{ServerName: host}, rt.clientHelloId, false, false)
 	if err = conn.Handshake(); err != nil {
 		_ = conn.Close()
 		return nil, err
@@ -98,10 +98,10 @@ func (rt *roundTripper) dialTLS(ctx context.Context, network, addr string) (net.
 	switch conn.ConnectionState().NegotiatedProtocol {
 	case http2.NextProtoTLS:
 		t2 := http2.Transport{DialTLS: rt.dialTLSHTTP2}
-		t2.Settings = []http2.Setting{
-			{ID: http2.SettingMaxConcurrentStreams, Val: 1000},
-			{ID: http2.SettingMaxFrameSize, Val: 16384},
-			{ID: http2.SettingMaxHeaderListSize, Val: 262144},
+		t2.Settings = map[http2.SettingID]uint32{
+			http2.SettingID(http2.SettingMaxConcurrentStreams): 1000,
+			http2.SettingID(http2.SettingMaxFrameSize):         16384,
+			http2.SettingID(http2.SettingMaxHeaderListSize):    262144,
 		}
 		t2.InitialWindowSize = 6291456
 		t2.HeaderTableSize = 65536

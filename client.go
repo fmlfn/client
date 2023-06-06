@@ -3,12 +3,12 @@ package client
 import (
 	"time"
 
-	http "github.com/yarochewsky/fhttp"
-	"github.com/yarochewsky/fhttp/cookiejar"
+	http "github.com/bogdanfinn/fhttp"
+	"github.com/bogdanfinn/fhttp/cookiejar"
 
 	"golang.org/x/net/proxy"
 
-	utls "github.com/yarochewsky/utls"
+	utls "github.com/bogdanfinn/utls"
 )
 
 func NewClient(clientHello utls.ClientHelloID, proxyUrl string, allowRedirect bool, timeout time.Duration) (http.Client, error) {
